@@ -1,0 +1,9 @@
+settings:
+  timeout: 5 # how many seconds to wait before declaring a site "down"
+  alert_webhook: "" # blank for now, to be used later for discord/slack
+
+sites:
+  - name: "Google"
+    url: "https://google.com"
+  - name: "Tech MSpace API"
+    url: "https://api.techmspace.dev"
