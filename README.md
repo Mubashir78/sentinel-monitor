@@ -68,9 +68,9 @@ settings:
 
   sites:
     - name: "ClubIQ Production"
-        url: "[https://clubiq.example.com](https://clubiq.example.com)"
-          - name: "Google"
-              url: "[https://google.com](https://google.com)"
+      url: "[https://clubiq.example.com](https://clubiq.example.com)"
+    - name: "Google"
+      url: "[https://google.com](https://google.com)"
 ```
 
 ## Usage
