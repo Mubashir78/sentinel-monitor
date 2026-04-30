@@ -59,7 +59,7 @@ def create_results_table(results) -> Table:
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(description="Sentinel: A fast concurrent uptime and SSL monitor.")
-    parser.add_argument("-c", "--config", default="targets.yaml", help="Path to the configuration file")
+    parser.add_argument("-c", "--config", default="../targets.yaml", help="Path to the configuration file")
     args = parser.parse_args()
 
     try:
@@ -69,7 +69,7 @@ def main():
 
         # Run the asynchronous checks
         with console.status(f"[bold green]Probing network targets concurrently...") as status:
-            results = asyncio.run(run_all_checks(app_config.sites, app_config.timeout)
+            results = asyncio.run(run_all_checks(app_config.sites, app_config.timeout))
 
         # Draw the table
         table = create_results_table(results)

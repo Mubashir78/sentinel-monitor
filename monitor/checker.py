@@ -28,11 +28,16 @@ async def check_uptime(client: httpx.AsyncClient, site: SiteConfig) -> SiteResul
 
     ssl_task = asyncio.to_thread(get_ssl_expiry_days, site.url)
 
+    ssl_days = "Pending"
+    elapsed = 0.0
+
     try:
         # A HEAD request asks the server for the headers only, not the full HTML body.
         # This makes the check much faster and less taxing on the target server.
         response = await client.head(site.url, follow_redirects=True)
         elapsed = (time.perf_counter() - start_time) * 1000
+
+        ssl_days = await ssl_task
 
         return SiteResult(
             name=site.name,
@@ -59,7 +64,7 @@ async def check_uptime(client: httpx.AsyncClient, site: SiteConfig) -> SiteResul
         )
 
 
-async def run_uptime_checks(sites: List[SiteConfig], timeout: int) -> List[SiteResult]:
+async def run_all_checks(sites: List[SiteConfig], timeout: int) -> List[SiteResult]:
     """
     Takes a list of sites and checks them all concurrently using an event loop.
     """
