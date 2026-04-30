@@ -33,7 +33,8 @@ async def check_uptime(client: httpx.AsyncClient, site: SiteConfig) -> SiteResul
             name=site.name,
             url=site.url,
             # Treat any 2xx or 3xx status code as "Up"
-            is_up=response.status_code,
+            is_up=response.status_code < 400,
+            status_code=response.status_code,
             response_time_ms=round(elapsed, 2)
         )
     except httpx.RequestError as e:
