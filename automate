@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+test_cli(){
+    container=$1
+    image=$2
+
+    # remove the previous container
+    docker rm -f "$container" 2>/dev/null
+
+    # build the image
+    docker build -t "$image" .
+
+    # run the container
+    docker run --name "$container" "$image"
+}
+
+test_cli "test" "monitor"
+    
