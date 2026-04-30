@@ -4,6 +4,7 @@ import time
 from dataclasses import dataclass
 from typing import List
 from config import SiteConfig, load_config
+from ssl_utils import get_ssl_expiry_days
 
 
 @dataclass
@@ -14,6 +15,7 @@ class SiteResult:
     is_up: bool
     status_code: int
     response_time_ms: float
+    ssl_days_left: int | str
     error_msg: str = ""
 
 
@@ -23,6 +25,9 @@ async def check_uptime(client: httpx.AsyncClient, site: SiteConfig) -> SiteResul
     We use a HEAD request instead of GET to save bandwidth.
     """
     start_time = time.perf_counter()
+
+    ssl_task = asyncio.to_thread(get_ssl_expiry_days, site.url)
+
     try:
         # A HEAD request asks the server for the headers only, not the full HTML body.
         # This makes the check much faster and less taxing on the target server.
@@ -35,18 +40,22 @@ async def check_uptime(client: httpx.AsyncClient, site: SiteConfig) -> SiteResul
             # Treat any 2xx or 3xx status code as "Up"
             is_up=response.status_code < 400,
             status_code=response.status_code,
-            response_time_ms=round(elapsed, 2)
+            response_time_ms=round(elapsed, 2),
+            ssl_days_left=ssl_days
         )
     except httpx.RequestError as e:
         # Catches DNS failures, connection timeouts, etc.
         elapsed = (time.perf_counter() - start_time) * 1000
+        ssl_days = await ssl_task
+
         return SiteResult(
             name=site.name,
             url=site.url,
             is_up=False,
             status_code=0,
             response_time_ms=round(elapsed, 2),
-            error_msg=str(e)
+            error_msg=str(e),
+            ssl_days_left=ssl_days
         )
 
 
@@ -60,8 +69,7 @@ async def run_uptime_checks(sites: List[SiteConfig], timeout: int) -> List[SiteR
         tasks = [check_uptime(client, site) for site in sites]
 
         # asyncio.gather fires all tasks at exactly the same time
-        results = await asyncio.gather(*tasks)
-        return list(results)
+        return await asyncio.gather(*tasks)
 
 
 # Quick Test

@@ -21,4 +21,4 @@ COPY . .
 # Navigate to the respective directory for execution
 WORKDIR /app/monitor
 
-CMD ["python", "checker.py"]
+CMD ["python", "ssl_utils.py"]
