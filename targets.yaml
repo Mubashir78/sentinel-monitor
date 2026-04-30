@@ -6,4 +6,6 @@ sites:
   - name: "Google"
     url: "https://google.com"
   - name: "Tech MSpace API"
-    url: "https://api.techmspace.dev"
+    url: "https://techmspace.dev"
+  - name: "Site Doesn't Exist"
+    url: "https://this-site-doesnot-exist.com"
