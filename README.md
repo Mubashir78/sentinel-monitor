@@ -28,21 +28,35 @@ Sentinel follows a decoupled, modular monolith design tailored for CLI execution
 ## Installation & Setup
 
 1. **Clone the repository:**
-   ```bash
-      git clone [https://github.com/YOUR_GITHUB_USERNAME/sentinel-monitor.git](https://github.com/YOUR_GITHUB_USERNAME/sentinel-monitor.git)
-         cd sentinel-monitor
-            ```
+```bash
+git clone [https://github.com/YOUR_GITHUB_USERNAME/sentinel-monitor.git](https://github.com/YOUR_GITHUB_USERNAME/sentinel-monitor.git)
 
-            2. **Create a virtual environment:**
-               ```bash
-                  python -m venv venv
-                     source venv/bin/activate  # On Windows use: venv\Scripts\activate
-                        ```
+cd sentinel-monitor
+```
 
-                        3. **Install the dependencies:**
-                           ```bash
-                              pip install -r requirements.txt
-                                 ```
+2. **Create a virtual environment:**
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+```
+
+3. **Install the dependencies:**
+```bash
+pip install -r requirements.txt
+```
+
+4. **Use docker to save the hastle.**
+```sh
+# make sure docker is up and running
+sudo systemctl status docker
+
+# if not
+sudo systemctl start docker
+
+# run the program
+chmod +x automate # change execution permissions
+./automate # run it
+```
 
 ## Configuration
 
@@ -57,7 +71,7 @@ settings:
         url: "[https://clubiq.example.com](https://clubiq.example.com)"
           - name: "Google"
               url: "[https://google.com](https://google.com)"
-              ```
+```
 
 ## Usage
 
