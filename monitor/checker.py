@@ -10,6 +10,7 @@ from ssl_utils import get_ssl_expiry_days
 @dataclass
 class SiteResult:
     """Stores the result of a single website check."""
+
     name: str
     url: str
     is_up: bool
@@ -46,7 +47,7 @@ async def check_uptime(client: httpx.AsyncClient, site: SiteConfig) -> SiteResul
             is_up=response.status_code < 400,
             status_code=response.status_code,
             response_time_ms=round(elapsed, 2),
-            ssl_days_left=ssl_days
+            ssl_days_left=ssl_days,
         )
     except httpx.RequestError as e:
         # Catches DNS failures, connection timeouts, etc.
@@ -60,7 +61,7 @@ async def check_uptime(client: httpx.AsyncClient, site: SiteConfig) -> SiteResul
             status_code=0,
             response_time_ms=round(elapsed, 2),
             error_msg=str(e),
-            ssl_days_left=ssl_days
+            ssl_days_left=ssl_days,
         )
 
 
@@ -68,7 +69,7 @@ async def run_all_checks(sites: List[SiteConfig], timeout: int) -> List[SiteResu
     """
     Takes a list of sites and checks them all concurrently using an event loop.
     """
-    
+
     async with httpx.AsyncClient(timeout=timeout) as client:
         # We open ONE connection pool to be shared across all requests
         tasks = [check_uptime(client, site) for site in sites]
@@ -95,10 +96,10 @@ if __name__ == "__main__":
     # Print the result
     for res in results:
         status = "UP" if res.is_up else "DOWN"
-        print(f"{status} | {res.status_code} | {res.response_time_ms}ms | {res.name} ({res.url})")
+        print(
+            f"{status} | {res.status_code} | {res.response_time_ms}ms | {res.name} ({res.url})"
+        )
         if res.error_msg:
             print(f"    Error: {res.error_msg}")
 
     print(f"\nTotal execution time for all sites: {total_time:.2f} seconds")
-    
-
