@@ -1,59 +1,73 @@
 import argparse
 import asyncio
 import sys
-from rich.console import Console
-from rich.table import Table
-from rich.live import Live
-
+from blessed import Terminal
 from config import load_config
 from checker import run_all_checks
 
-console = Console()
+term = Terminal()
 
-def create_results_table(results) -> Table:
-    """Generate a rich terminal table from the check results."""
-    table = Table(title="Sentinel Uptime & SSL Monitor", show_header=True, header_style="bold magenta")
+def print_table(results):
+    col = {"status": 8, "name": 20, "url": 35, "code": 10, "rtime": 14, "ssl": 24}
 
-    table.add_column("Status", justify="center")
-    table.add_column("Site Name", style="cyan")
-    table.add_column("URL", style="dim")
-    table.add_column("HTTP Code", justify="center")
-    table.add_column("Response Time", justify="right")
-    table.add_column("SSL Expires", justify="right")
+    def cell(s, w):
+	visible = term.length(s)
+	return s + " " * max(w - visible, 0)
+
+    sep = term.dim(" | ")
+
+    header = (
+	cell(term.bold_magenta("Status"),	col["status"]) + sep +
+	cell(term.bold_magenta("Site Name"),	col["name"]) + sep +
+	cell(term.bold_magenta("URL"),		col["url"]) + sep +
+	cell(term.bold_magenta("HTTP"),		col["code"]) + sep +
+	cell(term.bold_magenta("Resp(ms)"),	col["rtime"]) + sep +
+	cell(term.bold_magenta("SSL Expires"),	col["ssl"])
+    )
+
+    total_w = sum(col.values()) + 3 * (len(col) - 1)
+    divider = term.dim("-" * total_w)
+
+    print()
+    print(term.bold("Sentinel Uptime & SSL Monitor"))
+    print(divider)
+    print(header)
+    print(divider)
 
     for res in results:
-        # Determine Status formatting
-        if res.is_up:
-            status_str = "[bold green] UP[/bold green]"
-            code_str = f"[green]{res.status_code}[/green]"
-        else:
-            status_str = "[bold red] DOWN[/bold red]"
-            code_str = f"[red]{res.status_code}[/red]"
+	if res.is_up:
+	    status_str = term.bold_green("UP")
+	    code_str = term.green(str(res.status_code))
+	else:
+	    status_str = term.bold_red("DOWN")
+	    code_str = term.red(str(res.status_code) if res.status_code else "-")
 
-        # Determine SSL formatting
-        ssl_str = str(res.ssl_days_left)
-        if isinstance(res.ssl_days_left, int):
-            if res.ssl_days_left < 7:
-                ssl_str = f"[bold red]{res.ssl_days_left} days (CRITICAL)[/bold red]"
-            elif res.ssl_days_left < 30:
-                ssl_str = f"[yellow]{res.ssl_days_left} days (WARN)[/yellow]"
-            else:
-                ssl_str = f"[green]{res.ssl_days_left} days[/green]"
-        table.add_row(
-            status_str,
-            res.name,
-            res.url,
-            code_str,
-            f"{res.response_time_ms}ms",
-            ssl_str
-        )
+	ssl_raw = res.ssl_days_left
+	if isinstance(ssl_raw, int):
+	    if ssl_raw < 7:
+		ssl_str = term.bold_red(f"{ssl_raw} days (CRITICAL)")
+	    elif ssl_raw < 30:
+		ssl_str = term.yellow(f"{ssl_raw days (WARN)")
+	    else:
+		ssl_str = term.green(f"{ssl_raw} days")
+	else:
+	    ssl_str = str(ssl_raw)
 
-        # If there's an error, print it on the next line
-        if res.error_msg:
-            table.add_row(
-                "", "", f"[red]Error: {res.error_msg}[/red]", "", "", "")
+	row = (
+	    cell(status_str,			col["status"]) + sep +
+	    cell(term.cyan(res.name), 		col["name"]) + sep +
+	    cell(term.dim(res.url), 		col["url"]) + sep +
+	    cell(code_str, 			col["code"]) + sep +
+	    cell(f"{res.response_time_ms}ms",	col["rtime"]) + sep +
+	    cell(ssl_str, 			col["ssl"]) + sep +
+	)
+	print(row)
 
-    return table
+	if res.error_msg:
+	    print(term.red(f"	Error: {res.error_msg}"))
+
+    print(divider)
+    print() 
 
 
 def main():
@@ -65,21 +79,20 @@ def main():
     try:
         # Load the configurations
         app_config = load_config(args.config)
-        console.print(f"[*] Loaded {len(app_config.sites)} sites from {args.config}...", style="bold blue")
+        print(f"[*] Loaded {len(app_config.sites)} sites from {args.config}...")
 
         # Run the asynchronous checks
-        with console.status(f"[bold green]Probing network targets concurrently...") as status:
-            results = asyncio.run(run_all_checks(app_config.sites, app_config.timeout))
+	print(term.bold_green("Probing network targets concurrently..."))
+        results = asyncio.run(run_all_checks(app_config.sites, app_config.timeout))
 
         # Draw the table
-        table = create_results_table(results)
-        console.print(table)
+	print_table(results)
 
     except FileNotFoundError as e:
-        console.print(f"[bold red]Error:[/bold red] {e}")
+	print(term.bold_red(f"Error: {e}"))
         sys.exit(1)
     except Exception as e:
-        console.print(f"[bold red]Fatal Error:[/bold red] {e}")
+	print(term.bold_red(f"Fatal Error: {e}"))
         sys.exit(1)
 
 
