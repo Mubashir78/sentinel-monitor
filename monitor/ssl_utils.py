@@ -15,7 +15,7 @@ def get_ssl_expiry_days(url: str, timeout: int = 5) -> int | str:
         hostname = parsed_url.hostname or parsed_url.path
 
         # If the site doesn't use HTTPS, we bypass the check
-        if parsed_url.scheme != 'https':
+        if parsed_url.scheme != "https":
             return "Not HTTPS"
 
         # Create a standard network socket and an SSL context
@@ -26,10 +26,10 @@ def get_ssl_expiry_days(url: str, timeout: int = 5) -> int | str:
                 cert = ssock.getpeercert()
 
                 # The 'notAfter' date is formatted like: 'Apr 23 23:59:59 2026 GMT'
-                expire_date_str = cert['notAfter']
+                expire_date_str = cert["notAfter"]
 
                 # Convert the string into UTC datetime object
-                expire_date = datetime.strptime(expire_date_str, '%b %d %H:%M:%S %Y %Z')
+                expire_date = datetime.strptime(expire_date_str, "%b %d %H:%M:%S %Y %Z")
                 expire_date = expire_date.replace(tzinfo=timezone.utc)
                 # Calculate the days remaining
                 time_left = expire_date - datetime.now(timezone.utc)
@@ -48,7 +48,11 @@ def get_ssl_expiry_days(url: str, timeout: int = 5) -> int | str:
 # Quick test
 if __name__ == "__main__":
     # Testing a known good site and a bad/non-existent site
-    test_urls = ["https://google.com", "http://neverssl.com", "https://this-does-not-exist.org"]
+    test_urls = [
+        "https://google.com",
+        "http://neverssl.com",
+        "https://this-does-not-exist.org",
+    ]
 
     for test_url in test_urls:
         days_left = get_ssl_expiry_days(test_url)
