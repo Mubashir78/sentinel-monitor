@@ -29,18 +29,28 @@ Sentinel follows a decoupled, modular monolith design tailored for CLI execution
 
 1. **Clone the repository:**
 ```bash
-git clone [https://github.com/YOUR_GITHUB_USERNAME/sentinel-monitor.git](https://github.com/YOUR_GITHUB_USERNAME/sentinel-monitor.git)
+git clone [https://github.com/tomi3-11/sentinel-monitor.git](https://github.com/tomi3-11/sentinel-monitor.git)
 
 cd sentinel-monitor
 ```
 
 2. **Create a virtual environment:**
 ```bash
+# if uv installed
+uv venv
+source .venv/bin/activate
+
+#python
 python -m venv venv
 source venv/bin/activate  # On Windows use: venv\Scripts\activate
 ```
 
-3. **Install the dependencies:**
+3. **Install the dependencies:** <br>
+Even a better and faster way using uv to sync all the dependencies from the `uv.lock` file.
+```bash
+# with uv
+uv sync
+```
 ```bash
 pip install -r requirements.txt
 ```
