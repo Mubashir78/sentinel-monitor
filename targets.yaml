@@ -7,5 +7,5 @@ sites:
     url: "https://google.com"
   - name: "Tech MSpace API"
     url: "https://techmspace.dev"
-  - name: "Site Doesn't Exist"
-    url: "https://this-site-doesnot-exist.com"
+#  - name: "Site Doesn't Exist"
+#    url: "https://this-site-doesnot-exist.com"
