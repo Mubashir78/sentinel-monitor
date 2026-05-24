@@ -1,9 +1,7 @@
 import argparse
 import asyncio
 import sys
-
 from blessed import Terminal
-
 from checker import run_all_checks
 from config import load_config
 
@@ -11,20 +9,40 @@ term = Terminal()
 
 
 def print_table(results):
-    col = {
+    tw = term.width or 120
+
+    # fixed columns
+    fixed = {
         "status": 8,
-        "name": 20,
-        "url": 35,
         "code": 10,
         "rtime": 14,
         "ssl": 24,
     }
+    seps = 3 * 5 # 5 separators at 3 chars each
+    name_w = 20
+    fixed_total = sum(fixed.values()) + seps + name_w
 
+    # url gets whatever is left, minimum 10
+    url_w = max(tw - fixed_total -3, 10) # -3 for its own separator
+
+    col = {
+        "status": fixed["status"],
+        "name": name_w,
+        "url": url_w,
+        "code": fixed["code"],
+        "rtime": fixed["rtime"],
+        "ssl": fixed["ssl"],
+            }
     def cell(s, w):
         visible = term.length(s)
         return s + " " * max(w - visible, 0)
 
+    def trunc(s, w):
+        return s[:w-1] + "..." if len(s) > w else s
+
     sep = term.dim(" | ")
+    total_w = sum(col.values()) + 3 + (len(col) - 1)
+    divider = term.dim("-" * total_w)
 
     header = (
         cell(term.bold_magenta("Status"), col["status"]) + sep +
@@ -34,9 +52,6 @@ def print_table(results):
         cell(term.bold_magenta("Resp(ms)"), col["rtime"]) + sep +
         cell(term.bold_magenta("SSL Expires"), col["ssl"])
     )
-
-    total_w = sum(col.values()) + 3 * (len(col) - 1)
-    divider = term.dim("-" * total_w)
 
     print()
     print(term.bold("Sentinel Uptime & SSL Monitor"))
