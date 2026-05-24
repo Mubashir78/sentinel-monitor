@@ -38,10 +38,10 @@ def print_table(results):
         return s + " " * max(w - visible, 0)
 
     def trunc(s, w):
-        return s[:w-1] + "..." if len(s) > w else s
+        return s[:w-1] + "…" if len(s) > w else s
 
     sep = term.dim(" | ")
-    total_w = sum(col.values()) + 3 + (len(col) - 1)
+    total_w = sum(col.values()) + 3 * (len(col) - 1)
     divider = term.dim("-" * total_w)
 
     header = (
@@ -82,7 +82,7 @@ def print_table(results):
         row = (
             cell(status_str, col["status"]) + sep +
             cell(term.cyan(res.name), col["name"]) + sep +
-            cell(term.dim(res.url), col["url"]) + sep +
+            cell(term.dim(trunc(res.url, url_w)), col["url"]) + sep +
             cell(code_str, col["code"]) + sep +
             cell(f"{res.response_time_ms}ms", col["rtime"]) + sep +
             cell(ssl_str, col["ssl"])
