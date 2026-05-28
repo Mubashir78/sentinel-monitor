@@ -3,8 +3,8 @@ import httpx
 import time
 from dataclasses import dataclass
 from typing import List
-from config import SiteConfig, load_config
-from ssl_utils import get_ssl_expiry_days
+from monitor.config import SiteConfig, load_config
+from monitor.ssl_utils import get_ssl_expiry_days
 
 
 @dataclass
