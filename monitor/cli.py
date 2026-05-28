@@ -4,8 +4,14 @@ import sys
 from blessed import Terminal
 from checker import run_all_checks
 from config import load_config
+from importlib.metadata import version, PackageNotFoundError
 
 term = Terminal()
+
+try:
+    __version__ = version("sentinel-monitor")
+except PackageNotFoundError:
+    __version__ = "dev"
 
 
 def print_table(results):
@@ -102,6 +108,12 @@ def main():
 
     parser = argparse.ArgumentParser(
         description="Sentinel: A fast concurrent uptime and SSL monitor."
+    )
+
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"sentinel {__version__}",
     )
 
     parser.add_argument(
