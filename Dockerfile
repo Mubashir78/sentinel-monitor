@@ -7,18 +7,11 @@ ENV PYTHONUNBUFFERED=1
 # Set working directory
 WORKDIR /app
 
-COPY requirements.txt .
+COPY . .
 
 RUN apt-get update && \
     pip install --upgrade pip && \
-    pip install --no-cache -r requirements.txt && \
+    pip install --no-cache-dir . && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-
-# Copy the code base
-COPY . .
-
-# Navigate to the respective directory for execution
-WORKDIR /app/monitor
-
-CMD ["python", "cli.py"]
+CMD ["sentinel", "-c", "targets.yaml"]
