@@ -3,11 +3,13 @@ name = "sentinel-monitor"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "blessed>=1.42.0",
     "httpx>=0.28.1",
     "pyyaml>=6.0.3",
-    "rich>=15.0.0",
     "ruff>=0.15.14",
 ]
+
+[project.scripts]
+sentinel = "monitor.cli:main"
