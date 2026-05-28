@@ -26,9 +26,7 @@ async def check_uptime(client: httpx.AsyncClient, site: SiteConfig) -> SiteResul
     We use a HEAD request instead of GET to save bandwidth.
     """
     start_time = time.perf_counter()
-
     ssl_task = asyncio.to_thread(get_ssl_expiry_days, site.url)
-
     ssl_days = "Pending"
     elapsed = 0.0
 
@@ -37,7 +35,6 @@ async def check_uptime(client: httpx.AsyncClient, site: SiteConfig) -> SiteResul
         # This makes the check much faster and less taxing on the target server.
         response = await client.head(site.url, follow_redirects=True)
         elapsed = (time.perf_counter() - start_time) * 1000
-
         ssl_days = await ssl_task
 
         return SiteResult(
@@ -73,7 +70,6 @@ async def run_all_checks(sites: List[SiteConfig], timeout: int) -> List[SiteResu
     async with httpx.AsyncClient(timeout=timeout) as client:
         # We open ONE connection pool to be shared across all requests
         tasks = [check_uptime(client, site) for site in sites]
-
         # asyncio.gather fires all tasks at exactly the same time
         return await asyncio.gather(*tasks)
 
@@ -90,7 +86,7 @@ if __name__ == "__main__":
 
     # Run the asynchronous event loop
     start_total = time.perf_counter()
-    results = asyncio.run(run_uptime_checks(app_config.sites, app_config.timeout))
+    results = asyncio.run(run_all_checks(app_config.sites, app_config.timeout))
     total_time = time.perf_counter() - start_total
 
     # Print the result
