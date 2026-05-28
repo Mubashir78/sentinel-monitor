@@ -2,8 +2,8 @@ import argparse
 import asyncio
 import sys
 from blessed import Terminal
-from checker import run_all_checks
-from config import load_config
+from monitor.checker import run_all_checks
+from monitor.config import load_config
 from importlib.metadata import version, PackageNotFoundError
 
 term = Terminal()
