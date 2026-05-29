@@ -58,7 +58,8 @@ def load_config(file_path: str = "targets.yaml") -> AppConfig:
 
     if not sites:
         raise ValueError(
-            "No valid sites found in the configuration file. Ensure 'url' is provided for each site."
+            f"No valid sites found in '{file_path}'."
+            "Each site must have a 'url' field. Run 'sentinel init' to see the expected format."
         )
 
     return AppConfig(sites=sites, timeout=timeout, webhook_url=webhook_url)
