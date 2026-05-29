@@ -110,7 +110,7 @@ def print_table(results):
         if show_url:
             row = (
                 cell(status_str,                        col["status"]) + sep +
-                cell(term.cyan(res.name),               col["name"]) + sep +
+                cell(term.cyan(res.name, name_w),               col["name"]) + sep +
                 cell(term.dim(trunc(res.url, url_w)),   col["url"]) + sep +
                 cell(code_str,                          col["code"]) + sep +
                 cell(f"{res.response_time_ms}ms",       col["rtime"]) + sep +
@@ -119,7 +119,7 @@ def print_table(results):
         else:
             row = (
                 cell(status_str,                        col["status"]) + sep +
-                cell(term.cyan(res.name),               col["name"]) + sep +
+                cell(term.cyan(trunc(res.name, name_w)),               col["name"]) + sep +
                 cell(code_str,                          col["code"]) + sep +
                 cell(f"{res.response_time_ms}ms",       col["rtime"]) + sep +
                 cell(ssl_str,                           col["ssl"])
