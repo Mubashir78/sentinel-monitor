@@ -172,7 +172,7 @@ def main():
     parser.add_argument(
         "-c",
         "--config",
-        default="../targets.yaml",
+        default="targets.yaml",
         help="Path to the configuration file",
     )
 
