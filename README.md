@@ -6,7 +6,7 @@ Unlike heavy, agent-based monitoring solutions (like Prometheus or Datadog) or e
 
 ## The Problem It Solves
 
-As a developer managing multiple personal projects and club platforms (like ClubIQ), keeping track of domain health and SSL expiration dates manually is tedious. I built Sentinel to solve the personal problem of blind spots in my infrastructure. It provides an instant, locally executable snapshot of my web services without the overhead of maintaining a heavy monitoring stack.
+As a developer managing multiple personal projects and platforms, keeping track of domain health and SSL expiration dates manually is tedious. I built Sentinel to solve the personal problem of blind spots in my infrastructure. It provides an instant, locally executable snapshot of my web services without the overhead of maintaining a heavy monitoring stack.
 
 ## Key Features
 
@@ -51,6 +51,7 @@ Even a better and faster way using uv to sync all the dependencies from the `uv.
 # with uv
 uv sync
 ```
+OR via pip
 ```bash
 pip install -r requirements.txt
 ```
@@ -88,7 +89,7 @@ settings:
 Run the monitor from your terminal:
 
 ```bash
-python monitor/cli.py
+python monitor/cli.py -c <config-file.yml>
 ```
 
 ### Example Output:
