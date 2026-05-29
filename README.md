@@ -1,102 +1,121 @@
-# Sentinel: Concurrent Uptime & SSL Monitor
+# Sentinel — Uptime & SSL Monitor
 
-A lightweight, high-performance command-line utility built in Python to monitor website uptime and track SSL certificate health. 
+A fast, minimal CLI tool to monitor website uptime and SSL certificate health concurrently from your terminal.
 
-Unlike heavy, agent-based monitoring solutions (like Prometheus or Datadog) or external SaaS APIs, Sentinel relies on **asynchronous I/O** and **raw network sockets** to rapidly verify infrastructure health directly from your terminal.
+> gif/screenshot here
 
-## The Problem It Solves
+---
 
-As a developer managing multiple personal projects and platforms, keeping track of domain health and SSL expiration dates manually is tedious. I built Sentinel to solve the personal problem of blind spots in my infrastructure. It provides an instant, locally executable snapshot of my web services without the overhead of maintaining a heavy monitoring stack.
+## The Problem
+
+Managing multiple projects means keeping track of domain health and SSL expiration dates manually — which is tedious and easy to miss. Sentinel gives you an instant, locally executable snapshot of your web services without the overhead of a heavy monitoring stack or an external SaaS dependency.
+
+---
 
 ## Key Features
 
-* **Blazing Fast Concurrency:** Utilizes Python's `asyncio` and `httpx` to perform non-blocking HTTP requests, allowing dozens of sites to be checked simultaneously in milliseconds.
-* **Raw Socket SSL Extraction:** Bypasses third-party APIs by opening secure TCP sockets (`ssl.SSLContext.wrap_socket`) to manually extract and parse X.509 certificate metadata.
-* **Graceful Degradation:** Built with resilient error handling to catch DNS lookup failures, connection timeouts, and unexpected network drops without crashing the execution loop.
-* **Declarative Configuration:** Uses a strongly typed, easily readable `yaml` file for defining monitoring targets.
-* **Rich Terminal UI:** Renders a clean, color-coded dashboard directly in the terminal for immediate visual feedback.
+- **Concurrent checks** — all sites are probed simultaneously using async I/O, not one by one
+- **SSL health tracking** — extracts certificate expiry directly via raw TCP sockets, no third-party APIs
+- **Responsive terminal UI** — color-coded output that adapts to your terminal width
+- **Declarative config** — define all your targets in a single YAML file
+- **Graceful error handling** — DNS failures, timeouts, and connection drops are caught and reported per site without crashing
 
-## System Architecture
+---
 
-Sentinel follows a decoupled, modular monolith design tailored for CLI execution:
-1. **Configuration Manager:** Parses `targets.yaml` into strict Data Classes to ensure type safety.
-2. **Concurrency Engine:** An `asyncio` event loop that manages non-blocking network I/O.
-3. **Network Probes (Worker Layer):**
-    * *Uptime Probe:* Dispatches asynchronous HTTP `HEAD` requests to minimize bandwidth and server load.
-        * *SSL Probe:* Runs blocking raw socket operations inside background threads (`asyncio.to_thread`) to prevent blocking the main event loop.
+## Installation
 
-## Installation & Setup
-
-1. **Clone the repository:**
 ```bash
-git clone [https://github.com/tomi3-11/sentinel-monitor.git](https://github.com/tomi3-11/sentinel-monitor.git)
-
-cd sentinel-monitor
+pip install sentinel-monitor
 ```
 
-2. **Create a virtual environment:**
+Or with uv:
+
 ```bash
-# if uv installed
-uv venv
-source .venv/bin/activate
-
-#python
-python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
+uv tool install sentinel-monitor
 ```
 
-3. **Install the dependencies:** <br>
-Even a better and faster way using uv to sync all the dependencies from the `uv.lock` file.
+---
+
+## Quick Start
+
+Generate a starter config in your current directory:
+
 ```bash
-# with uv
-uv sync
+sentinel init
 ```
-OR via pip
+
+Run the monitor:
+
 ```bash
-pip install -r requirements.txt
+sentinel
 ```
 
-4. **Use docker to save the hastle.**
-```sh
-# make sure docker is up and running
-sudo systemctl status docker
+Point to a specific config file:
 
-# if not
-sudo systemctl start docker
-
-# run the program
-chmod +x automate # change execution permissions
-./automate # run it
+```bash
+sentinel -c /path/to/targets.yaml
 ```
+
+Check version:
+
+```bash
+sentinel --version
+```
+
+---
 
 ## Configuration
-
-Create a `targets.yaml` file in the root directory. Add the websites you wish to monitor:
 
 ```yaml
 settings:
   timeout: 5
+  alert_webhook: ""  # optional: Discord/Slack webhook URL
 
-  sites:
-    - name: "ClubIQ Production"
-      url: "[https://clubiq.example.com](https://clubiq.example.com)"
-    - name: "Google"
-      url: "[https://google.com](https://google.com)"
+sites:
+  - name: "Google"
+    url: "https://google.com"
+  - name: "My API"
+    url: "https://api.example.com"
 ```
 
-## Usage
+---
 
-Run the monitor from your terminal:
+## How It Works
+
+Sentinel is built around three components:
+
+**Configuration Manager** — parses `targets.yaml` into typed dataclasses, validates structure, and raises actionable errors on bad input.
+
+**Concurrency Engine** — an `asyncio` event loop dispatches all HTTP checks simultaneously via `httpx`. Sites are never checked sequentially.
+
+**Network Probes** — two probe types run per site:
+- *Uptime probe:* async HTTP `HEAD` request — minimal bandwidth, no body fetched
+- *SSL probe:* raw TCP socket wrapped with `ssl.SSLContext` to extract and parse X.509 certificate metadata, runs in a background thread via `asyncio.to_thread` to avoid blocking the event loop
+
+---
+
+## Development Setup
 
 ```bash
-python monitor/cli.py -c <config-file.yml>
+git clone https://github.com/tomi3-11/sentinel-monitor.git
+cd sentinel-monitor
+uv venv && source .venv/bin/activate
+uv sync
+sentinel -c targets.yaml
 ```
 
-### Example Output:
+---
 
-`[*] Loaded 2 sites from targets.yaml...`
+## Docker
 
-| Status | Site Name | URL | HTTP Code | Response Time | SSL Expires |
-| :---: | :--- | :--- | :---: | :---: | :---: |
-| UP | ClubIQ Production | https://clubiq.example.com | 200 | 142.5ms | 84 days |
-| UP | Google | https://google.com | 200 | 89.2ms | 62 days |
+```bash
+docker build -t monitor .
+docker run -t monitor sentinel -c targets.yaml
+```
+
+---
+
+## License
+
+MIT
+
