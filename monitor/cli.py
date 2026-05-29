@@ -5,6 +5,7 @@ from blessed import Terminal
 from monitor.checker import run_all_checks
 from monitor.config import load_config
 from importlib.metadata import version, PackageNotFoundError
+from pathlib import Path
 
 term = Terminal()
 
@@ -12,6 +13,26 @@ try:
     __version__ = version("sentinel-monitor")
 except PackageNotFoundError:
     __version__ = "dev"
+
+
+def init_config():
+    path = Path("targets.yaml")
+    if path.exists():
+        print(term.yellow("targets.yaml already exists in this directory."))
+        return
+    template = """\
+settings:
+  timeout: 5
+  alert_webhook: "" # to be implemented for real time alerts on discord/slack
+
+sites:
+  - name: "Example Site"
+    url: "https://example.com"
+  - name: "Google"
+    url: "https://google.com"
+"""
+    path.write_text(template)
+    print(term.bold_green("Created targets.yaml - edit it with your sites and run: sentinel -c targets.yaml"))
 
 
 def print_table(results):
@@ -155,7 +176,17 @@ def main():
         help="Path to the configuration file",
     )
 
+    parser.add_argument(
+        "command",
+        nargs="?",
+        help="Optional command: init",
+    )
+
     args = parser.parse_args()
+
+    if args.command == "init":
+        init_config()
+        return
 
     try:
         # Load the configurations
