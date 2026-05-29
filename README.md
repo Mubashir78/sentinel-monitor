@@ -2,7 +2,7 @@
 
 A fast, minimal CLI tool to monitor website uptime and SSL certificate health concurrently from your terminal.
 
-> gif/screenshot here
+![demo](demo.gif)
 
 ---
 
