@@ -16,6 +16,7 @@ except PackageNotFoundError:
 
 def print_table(results):
     tw = term.width or 120
+    show_url = tw >= 100
 
     # fixed columns
     fixed = {
@@ -24,21 +25,33 @@ def print_table(results):
         "rtime": 14,
         "ssl": 24,
     }
-    seps = 3 * 5 # 5 separators at 3 chars each
-    name_w = 20
-    fixed_total = sum(fixed.values()) + seps + name_w
+    if show_url:
+        seps = 3 * 5 # 5 separators at 3 chars each
+        name_w = 20
+        fixed_total = sum(fixed.values()) + seps + name_w
 
-    # url gets whatever is left, minimum 10
-    url_w = max(tw - fixed_total -3, 10) # -3 for its own separator
+        # url gets whatever is left, minimum 10
+        url_w = max(tw - fixed_total -3, 10) # -3 for its own separator
 
-    col = {
-        "status": fixed["status"],
-        "name": name_w,
-        "url": url_w,
-        "code": fixed["code"],
-        "rtime": fixed["rtime"],
-        "ssl": fixed["ssl"],
-            }
+        col = {
+            "status": fixed["status"],
+            "name": name_w,
+            "url": url_w,
+            "code": fixed["code"],
+            "rtime": fixed["rtime"],
+            "ssl": fixed["ssl"],
+        }
+    else:
+        seps = 3 * 4
+        name_w = max(tw - sum(fixed.values()) - seps -1, 10)
+        col = {
+            "status": fixed["status"],
+            "name": name_w,
+            "code": fixed["code"],
+            "rtime": fixed["rtime"],
+            "ssl": fixed["ssl"],
+        }
+
     def cell(s, w):
         visible = term.length(s)
         return s + " " * max(w - visible, 0)
@@ -50,14 +63,23 @@ def print_table(results):
     total_w = sum(col.values()) + 3 * (len(col) - 1)
     divider = term.dim("-" * total_w)
 
-    header = (
-        cell(term.bold_magenta("Status"), col["status"]) + sep +
-        cell(term.bold_magenta("Site Name"), col["name"]) + sep +
-        cell(term.bold_magenta("URL"), col["url"]) + sep +
-        cell(term.bold_magenta("HTTP"), col["code"]) + sep +
-        cell(term.bold_magenta("Resp(ms)"), col["rtime"]) + sep +
-        cell(term.bold_magenta("SSL Expires"), col["ssl"])
-    )
+    if show_url:
+        header = (
+            cell(term.bold_magenta("Status"),       col["status"]) + sep +
+            cell(term.bold_magenta("Site Name"),    col["name"]) + sep +
+            cell(term.bold_magenta("URL"),          col["url"]) + sep +
+            cell(term.bold_magenta("HTTP"),         col["code"]) + sep +
+            cell(term.bold_magenta("Resp(ms)"),     col["rtime"]) + sep +
+            cell(term.bold_magenta("SSL Expires"),  col["ssl"])
+        )
+    else:
+        header = (
+            cell(term.bold_magenta("Status"),       col["status"]) + sep +
+            cell(term.bold_magenta("Site Name"),    col["name"]) + sep +
+            cell(term.bold_magenta("HTTP"),         col["code"]) + sep +
+            cell(term.bold_magenta("Resp(ms)"),     col["rtime"]) + sep +
+            cell(term.bold_magenta("SSL Expires"),  col["ssl"])
+        )
 
     print()
     print(term.bold("Sentinel Uptime & SSL Monitor"))
@@ -85,14 +107,24 @@ def print_table(results):
         else:
             ssl_str = str(ssl_raw)
 
-        row = (
-            cell(status_str, col["status"]) + sep +
-            cell(term.cyan(res.name), col["name"]) + sep +
-            cell(term.dim(trunc(res.url, url_w)), col["url"]) + sep +
-            cell(code_str, col["code"]) + sep +
-            cell(f"{res.response_time_ms}ms", col["rtime"]) + sep +
-            cell(ssl_str, col["ssl"])
-        )
+        if show_url:
+            row = (
+                cell(status_str,                        col["status"]) + sep +
+                cell(term.cyan(res.name),               col["name"]) + sep +
+                cell(term.dim(trunc(res.url, url_w)),   col["url"]) + sep +
+                cell(code_str,                          col["code"]) + sep +
+                cell(f"{res.response_time_ms}ms",       col["rtime"]) + sep +
+                cell(ssl_str,                           col["ssl"])
+            )
+        else:
+            row = (
+                cell(status_str,                        col["status"]) + sep +
+                cell(term.cyan(res.name),               col["name"]) + sep +
+                cell(code_str,                          col["code"]) + sep +
+                cell(f"{res.response_time_ms}ms",       col["rtime"]) + sep +
+                cell(ssl_str,                           col["ssl"])
+            )
+
 
         print(row)
 
