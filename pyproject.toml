@@ -15,5 +15,7 @@ dev = [
     "ruff>=0.15.14",
 ]
 
+liscense = { text = "MIT" }
+
 [project.scripts]
 sentinel = "monitor.cli:main"
