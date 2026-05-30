@@ -1,27 +1,26 @@
 [project]
 name = "sentinel-monitor"
 version = "0.1.1"
-description = "Add your description here"
+description = "A fast, minimal CLI tool to monitor website uptime and SSL certificate health."
 readme = "README.md"
 requires-python = ">=3.11"
-liscense = { text = "MIT" }
+license = { text = "MIT" }
 dependencies = [
     "blessed>=1.42.0",
     "httpx>=0.28.1",
     "pyyaml>=6.0.3",
 ]
-
-[dependency-groups]
-dev = [
-    "ruff>=0.15.14",
-]
-
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Development Status :: 4 - Beta",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.14",
 ]
 
 [project.scripts]
