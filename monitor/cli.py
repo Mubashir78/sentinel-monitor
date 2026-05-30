@@ -164,6 +164,7 @@ def main():
     )
 
     parser.add_argument(
+        "-v",
         "--version",
         action="version",
         version=f"sentinel {__version__}",
