@@ -4,6 +4,7 @@ version = "0.1.1"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
+liscense = { text = "MIT" }
 dependencies = [
     "blessed>=1.42.0",
     "httpx>=0.28.1",
@@ -15,7 +16,13 @@ dev = [
     "ruff>=0.15.14",
 ]
 
-liscense = { text = "MIT" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Development Status :: 4 - Beta",
+]
 
 [project.scripts]
 sentinel = "monitor.cli:main"
