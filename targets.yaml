@@ -1,0 +1,9 @@
+settings:
+  timeout: 5
+  alert_webhook: "" # to be implemented for real time alerts on discord/slack
+
+sites:
+  - name: "Example Site"
+    url: "https://example.com"
+  - name: "Google"
+    url: "https://google.com"

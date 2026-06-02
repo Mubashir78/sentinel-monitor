@@ -10,7 +10,7 @@ wheels/
 .venv
 
 # configs
-targets.yaml
+#targets.yaml
 test.yaml
 
 #demo.gif
