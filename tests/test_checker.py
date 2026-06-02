@@ -44,3 +44,19 @@ async def test_site_is_down(site):
     assert result.is_up is False
     assert result.status_code == 404
     assert result.error_msg == ""
+
+
+@pytest.mark.asyncio
+async def test_request_error(site):
+    """A network error marks the site as down with an error message."""
+    import httpx
+
+    mock_client = AsyncMock()
+    mock_client.head.side_effect = httpx.RequestError("DNS resolution failed")
+
+    with patch("monitor.checker.get_ssl_expiry_days", return_value="DNS Lookup Failed"):
+        result = await check_uptime(mock_client, site)
+
+    assert result.is_up is False
+    assert result.status_code == 0
+    assert "DNS resolution failed" in result.error_msg
