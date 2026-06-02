@@ -8,7 +8,6 @@ license = { text = "MIT" }
 dependencies = [
     "blessed>=1.42.0",
     "httpx>=0.28.1",
-    "pytest>=9.0.3",
     "pyyaml>=6.0.3",
 ]
 classifiers = [
@@ -22,6 +21,8 @@ classifiers = [
 [dependency-groups]
 dev = [
     "ruff>=0.15.14",
+    "pytest>=9.0.3",
+    "pytest-asyncio>=1.4.0",
 ]
 
 [project.scripts]
