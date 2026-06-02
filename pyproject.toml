@@ -27,3 +27,6 @@ dev = [
 
 [project.scripts]
 sentinel = "monitor.cli:main"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
