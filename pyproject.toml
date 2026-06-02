@@ -30,3 +30,6 @@ sentinel = "monitor.cli:main"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+
+[tool.uv]
+package = true

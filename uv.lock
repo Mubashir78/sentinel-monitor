@@ -261,17 +261,17 @@ wheels = [
 [[package]]
 name = "sentinel-monitor"
 version = "0.1.1"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "blessed" },
     { name = "httpx" },
-    { name = "pytest-asyncio" },
     { name = "pyyaml" },
 ]
 
 [package.dev-dependencies]
 dev = [
     { name = "pytest" },
+    { name = "pytest-asyncio" },
     { name = "ruff" },
 ]
 
@@ -279,13 +279,13 @@ dev = [
 requires-dist = [
     { name = "blessed", specifier = ">=1.42.0" },
     { name = "httpx", specifier = ">=0.28.1" },
-    { name = "pytest-asyncio", specifier = ">=1.4.0" },
     { name = "pyyaml", specifier = ">=6.0.3" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "pytest", specifier = ">=9.0.3" },
+    { name = "pytest-asyncio", specifier = ">=1.4.0" },
     { name = "ruff", specifier = ">=0.15.14" },
 ]
 
