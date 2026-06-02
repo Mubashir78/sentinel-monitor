@@ -60,3 +60,23 @@ async def test_request_error(site):
     assert result.is_up is False
     assert result.status_code == 0
     assert "DNS resolution failed" in result.error_msg
+
+
+@pytest.mark.asyncio
+async def test_run_all_checks_returns_all_results():
+    """All sites are checked and results returned for each."""
+    sites = [
+        SiteConfig(name="Site One", url="https://one.example.com"),
+        SiteConfig(name="Site Two", url="https://two.example.com"),
+    ]
+
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+
+    with patch("monitor.checker.get_ssl_expiry_days", return_value=90), \
+         patch("httpx.AsyncClient.head", new_callable=AsyncMock, return_value=mock_response):
+        results = await run_all_checks(sites, timeout=5)
+
+    assert len(results) == 2
+    assert all(isinstance(r, SiteResult) for r in results)
+    assert all(r.is_up for r in results)
