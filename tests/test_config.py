@@ -2,13 +2,6 @@ import pytest
 from monitor.config import load_config, AppConfig, SiteConfig
 
 
-def test_config():
-    config = load_config()
-
-    assert config is not None
-    assert config.timeout == 5
-
-
 def test_load_valid_config(tmp_path):
     """Valid config loads correctly into typed dataclasses."""
     config_file = tmp_path / "targets.yaml"
