@@ -47,3 +47,9 @@ sites:
 
     assert config.timeout == 5
     assert config.webhook_url is None
+
+
+def test_missing_file():
+    """Missing config file raises FileNotFoundError."""
+    with pytest.raises(FileNotFoundError):
+        load_config("nonexistent.yaml")
