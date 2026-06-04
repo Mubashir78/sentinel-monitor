@@ -64,6 +64,18 @@ def test_malformed_yaml(tmp_path):
         load_config(str(config_file))
 
 
+def test_no_site(tmp_path):
+    """Config with no valid sites raises ValueError."""
+    config_file = tmp_file / "targets.yaml"
+    config_file.write("""
+settings:
+  timeout: 5
+sites: []
+""")
+    with pytest.raises(ValueError):
+        load_config(str(config_file))
+
+
 def test_site_missing_url_is_skipped(tmp_path):
     """Sites without a url field are skipped, raises ValueError if none left."""
     config_file = tmp_path / "targets.yaml"
