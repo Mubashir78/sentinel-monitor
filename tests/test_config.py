@@ -53,3 +53,12 @@ def test_missing_file():
     """Missing config file raises FileNotFoundError."""
     with pytest.raises(FileNotFoundError):
         load_config("nonexistent.yaml")
+
+
+def test_malformed_yaml(tmp_path):
+    """Malformed YAML raises ValueError."""
+    config_file = tmp_path / "targets.yaml"
+    config_file.write_text("{ invalid: yaml: content:")
+
+    with pytest.raises(ValueError):
+        load_config(str(config_file))
