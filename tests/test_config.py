@@ -66,8 +66,8 @@ def test_malformed_yaml(tmp_path):
 
 def test_no_site(tmp_path):
     """Config with no valid sites raises ValueError."""
-    config_file = tmp_file / "targets.yaml"
-    config_file.write("""
+    config_file = tmp_path / "targets.yaml"
+    config_file.write_text("""
 settings:
   timeout: 5
 sites: []
