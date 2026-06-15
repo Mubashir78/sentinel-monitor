@@ -26,3 +26,29 @@ sites:
     assert isinstance(config.sites[0], SiteConfig)
     assert config.sites[0].name == "Google"
     assert config.sites[0].url == "https://google.com"
+
+
+def test_load_config_defaults(tmp_path):
+    """Config uses default timeout when settings block is missing."""
+    config_file = tmp_path / "targets.yaml"
+    config_file.write_text("""
+sites:
+  - name: "Google"
+    url: "https://google.com"
+""")
+    config = load_config(str(config_file))
+
+    assert config.timeout == 5
+    assert config.webhook_url is None
+
+
+def test_missing_file():
+    """Missing config raises FileNotFoundError."""
+    with pytest.raises(FileNotFoundError):
+        load_config("nonexistent.yaml")
+
+
+def test_malformed_yaml(tmp_path):
+    """Malformed YAML raises ValueError."""
+    config_file = tmp_path / "targets.yaml"
+    
