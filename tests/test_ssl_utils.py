@@ -45,3 +45,12 @@ def test_connection_timeout():
 
     assert result == "Connection Time Out"
 
+
+def test_ssl_error():
+    """SSL handshake failure returns descriptive string."""
+    with patch("monitor.ssl_utils.socket.create_connection", side_effect=ssl.SSLError("handshake failed")):
+        result = get_ssl_expiry_days("https://example.com")
+
+    assert "SSL Handshake Failed" in result
+
+
