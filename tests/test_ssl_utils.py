@@ -1,4 +1,6 @@
 import pytest
+import socket
+import ssl
 from unittest.mock import patch, MagicMock
 from monitor.ssl_utils import get_ssl_expiry_days
 
@@ -28,4 +30,18 @@ def test_valid_ssl_cert():
 
     assert isinstance(result, int)
     assert result > 0
+
+
+def test_dns_lookup_failure():
+    """DNS failure returns descriptive string."""
+    with patch("monitor.ssl_utils.socket.create_connection", side_effect=socket.gaierror):
+        result = get_ssl_expiry_days("https://this-does-not-exist.example.com")
+
+
+def test_connection_timeout():
+    """Connection timeout returns descriptive string."""
+    with patch("monitor.ssl_utils.socket.create_connection", side_effect=socket.timeout):
+        result = get_ssl_expiry_days("https://example.com")
+
+    assert result == "Connection Time Out"
 
