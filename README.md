@@ -3,6 +3,7 @@
 A fast, minimal CLI tool to monitor website uptime and SSL certificate health concurrently from your terminal.
 
 <div align="center">
+
 ![PyPI version](https://img.shields.io/pypi/v/sentinel-monitor)
 ![License](https://img.shields.io/github/license/tomi3-11/sentinel-monitor)
 ![PyPI downloads](https://img.shields.io/pypi/dm/sentinel-monitor)
