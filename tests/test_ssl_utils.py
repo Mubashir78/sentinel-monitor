@@ -1,4 +1,3 @@
-import pytest
 import socket
 import ssl
 from unittest.mock import patch, MagicMock
@@ -36,6 +35,8 @@ def test_dns_lookup_failure():
     """DNS failure returns descriptive string."""
     with patch("monitor.ssl_utils.socket.create_connection", side_effect=socket.gaierror):
         result = get_ssl_expiry_days("https://this-does-not-exist.example.com")
+
+    assert result == "DNS Lookup Failed"
 
 
 def test_connection_timeout():
