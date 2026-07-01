@@ -132,7 +132,7 @@ def print_table(results):
                 cell(term.cyan(res.name),               col["name"]) + sep +
                 cell(term.dim(trunc(res.url, url_w)),   col["url"]) + sep +
                 cell(code_str,                          col["code"]) + sep +
-                cell(f"{res.response_time_ms}ms",       col["rtime"]) + sep +
+                cell(f"{res.response_time_ms:.2f}ms",       col["rtime"]) + sep +
                 cell(ssl_str,                           col["ssl"])
             )
         else:
@@ -140,7 +140,7 @@ def print_table(results):
                 cell(status_str,                        col["status"]) + sep +
                 cell(term.cyan(trunc(res.name, name_w)),               col["name"]) + sep +
                 cell(code_str,                          col["code"]) + sep +
-                cell(f"{res.response_time_ms}ms",       col["rtime"]) + sep +
+                cell(f"{res.response_time_ms:.2f}ms",       col["rtime"]) + sep +
                 cell(ssl_str,                           col["ssl"])
             )
 
